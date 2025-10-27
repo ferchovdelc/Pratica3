@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>ONG Raio da Esperança - SPA</title>
+    <!-- Favicon (Exemplo) -->
+    <link rel="icon" href="img/favicon.png" type="image/png">
+
+    <!-- Link para a Folha de Estilos -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Ícones (Font Awesome) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Script (defer garante que só executa após o HTML ser lido) -->
+    <!-- MUITO IMPORTANTE: O script.js agora deve ser carregado no <head> com 'defer' -->
+    <!-- Isso garante que as funções de template e SPA estejam prontas -->
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+<!--
+  HEADER (Cabeçalho)
+  - Fica fora do <main> pois é persistente em todas as "páginas".
+  - Usa Flexbox para alinhamento.
+  - Contém o botão "hambúrguer" para mobile.
+-->
+<header class="site-header">
+    <div class="container layout-flex-between">
+        <div class="logo">
+            <a href="#/inicio">
+                <!-- Imagem do Logo (Atualize o caminho) -->
+                <img src="img/logo-raio-esperanca.png" alt="Logo ONG Raio da Esperança" class="logo-img">
+            </a>
+        </div>
+
+        <!-- Botão Hambúrguer (Mobile) -->
+        <button class="nav-toggle" aria-label="Abrir menu">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Navegação Principal -->
+        <nav class="main-nav">
+            <ul class="nav-list">
+                <li><a href="#/inicio" class="nav-link">Início</a></li>
+                <li><a href="#/projetos" class="nav-link">Projetos</a></li>
+                <li><a href="#/cadastro" class="nav-link">Cadastro</a></li>
+                <li>
+                    <a href="#" class="nav-link has-dropdown">Sobre <i class="fas fa-chevron-down fa-xs"></i></a>
+                    <!-- Submenu Dropdown -->
+                    <ul class="dropdown-menu">
+                        <li><a href="#/sobre/quem-somos">Quem Somos</a></li>
+                        <li><a href="#/sobre/transparencia">Transparência</a></li>
+                    </ul>
+                </li>
+                <li><a href="#/doar" class="btn btn-primary btn-sm">Doe Agora</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<!--
+  APP ROOT (Raiz da Aplicação)
+  - Esta é a "casca" principal da SPA.
+  - O JavaScript (via script.js) irá injetar os templates
+    (início, projetos, cadastro) dentro desta tag <main>.
+-->
+<main id="app-root" class="container">
+    <!-- O conteúdo da página será carregado aqui dinamicamente -->
+    <!-- Por padrão, o script.js deve carregar o template "inicio" -->
+</main>
+
+<!--
+  FOOTER (Rodapé)
+  - Também fica fora do <main> pois é persistente.
+  - Usa CSS Grid para o layout responsivo.
+-->
+<footer class="site-footer">
+    <div class="container footer-grid">
+        <!-- Coluna 1: Sobre -->
+        <div class="footer-col">
+            <h4 class="footer-title">ONG Raio da Esperança</h4>
+            <p>Transformando vidas e construindo futuros em Curitiba, Paraná. Junte-se a nós e faça parte da mudança.</p>
+            <!-- Imagem (Exemplo de selo) -->
+            <img src="img/selo-transparencia.png" alt="Selo ONG Transparente" class="footer-badge">
+        </div>
+
+        <!-- Coluna 2: Links Rápidos -->
+        <div class="footer-col">
+            <h4 class="footer-title">Navegação</h4>
+            <ul class="footer-list">
+                <li><a href="#/inicio" class="footer-link">Início</a></li>
+                <li><a href="#/projetos" class="footer-link">Projetos Sociais</a></li>
+                <li><a href="#/cadastro" class="footer-link">Seja Voluntário</a></li>
+                <li><a href="#/sobre/transparencia" class="footer-link">Transparência</a></li>
+                <li><a href="#/doar" class="footer-link">Como Doar</a></li>
+            </ul>
+        </div>
+
+        <!-- Coluna 3: Contato -->
+        <div class="footer-col">
+            <h4 class="footer-title">Contato</h4>
+            <address class="footer-contact">
+                <p><i class="fas fa-map-marker-alt"></i> Rua da Cidadania, 123 - Centro, Curitiba - PR, 80010-010</p>
+                <p><i class="fas fa-phone"></i> (41) 3321-1234</p>
+                <p><i class="fas fa-envelope"></i> <a href="mailto:contato@raiodaesperanca.org.br" class="footer-link">contato@raiodaesperanca.org.br</a></p>
+            </address>
+        </div>
+
+        <!-- Coluna 4: Redes Sociais -->
+        <div class="footer-col">
+            <h4 class="footer-title">Siga-nos</h4>
+            <div class="social-icons">
+                <a href="#" class="social-link" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#" class="social-link" aria-label="Youtube"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2024 ONG Raio da Esperança. Todos os direitos reservados. CNPJ: 12.345.678/0001-99</p>
+    </div>
+</footer>
+
+<!--
+  MODAL (Componente de Feedback)
+  - Fica escondido por padrão (display: none).
+  - O JavaScript irá torná-lo visível quando necessário.
+-->
+<div id="feedback-modal" class="modal-overlay">
+    <div class="modal-content">
+        <button id="modal-close-btn" class="modal-close" aria-label="Fechar modal">&times;</button>
+        <div class="modal-icon">
+            <!-- O ícone será definido via JS (ex: 'fa-check-circle' ou 'fa-times-circle') -->
+            <i id="modal-icon" class="fas"></i>
+        </div>
+        <h3 id="modal-title">Título do Modal</h3>
+        <p id="modal-message">Mensagem de feedback para o usuário.</p>
+    </div>
+</div>
+
+</body>
+</html>
