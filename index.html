@@ -2,143 +2,85 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>ONG Raio da Esperança - SPA</title>
-    <!-- Favicon (Exemplo) -->
-    <link rel="icon" href="img/favicon.png" type="image/png">
-
-    <!-- Link para a Folha de Estilos -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONG Raio da Esperança</title>
+    <!-- O CSS é o mesmo, não precisa mudar o link -->
     <link rel="stylesheet" href="style.css">
-
-    <!-- Ícones (Font Awesome) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-    <!-- Script (defer garante que só executa após o HTML ser lido) -->
-    <!-- MUITO IMPORTANTE: O script.js agora deve ser carregado no <head> com 'defer' -->
-    <!-- Isso garante que as funções de template e SPA estejam prontas -->
-    <script src="script.js" defer></script>
+    <meta name="description" content="ONG Raio da Esperança. Transformamos vidas através da educação, capacitação e solidariedade em Curitiba.">
 </head>
 <body>
+<a href="#main-content" class="skip-link">Saltar para o conteúdo principal</a>
 
-<!--
-  HEADER (Cabeçalho)
-  - Fica fora do <main> pois é persistente em todas as "páginas".
-  - Usa Flexbox para alinhamento.
-  - Contém o botão "hambúrguer" para mobile.
--->
-<header class="site-header">
-    <div class="container layout-flex-between">
-        <div class="logo">
-            <a href="#/inicio">
-                <!-- Imagem do Logo (Atualize o caminho) -->
-                <img src="img/logo-raio-esperanca.png" alt="Logo ONG Raio da Esperança" class="logo-img">
+<!-- CABEÇALHO -->
+<header class="header-container">
+    <div class="container layout-grid">
+        <div class="logo col-span-4 md-col-span-3">
+            <a href="#inicio">
+                <h1>Raio da Esperança</h1>
             </a>
         </div>
 
-        <!-- Botão Hambúrguer (Mobile) -->
-        <button class="nav-toggle" aria-label="Abrir menu">
-            <i class="fas fa-bars"></i>
-        </button>
-
-        <!-- Navegação Principal -->
-        <nav class="main-nav">
-            <ul class="nav-list">
-                <li><a href="#/inicio" class="nav-link">Início</a></li>
-                <li><a href="#/projetos" class="nav-link">Projetos</a></li>
-                <li><a href="#/cadastro" class="nav-link">Cadastro</a></li>
-                <li>
-                    <a href="#" class="nav-link has-dropdown">Sobre <i class="fas fa-chevron-down fa-xs"></i></a>
-                    <!-- Submenu Dropdown -->
-                    <ul class="dropdown-menu">
-                        <li><a href="#/sobre/quem-somos">Quem Somos</a></li>
-                        <li><a href="#/sobre/transparencia">Transparência</a></li>
-                    </ul>
-                </li>
-                <li><a href="#/doar" class="btn btn-primary btn-sm">Doe Agora</a></li>
+        <!-- NAVEGAÇÃO -->
+        <nav class="navigation col-span-8 md-col-span-9">
+            <button class="nav-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-menu">
+                <span class="hamburger"></span>
+            </button>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="#inicio" class="nav-link">Início</a></li>
+                <li><a href="#projetos" class="nav-link">Projetos</a></li>
+                <li><a href="#cadastro" class="nav-link">Seja Voluntário</a></li>
             </ul>
+
+            <!-- BOTÃO MODO ESCURO (NOVO) -->
+            <button class="theme-toggle" id="theme-toggle" title="Mudar tema" aria-label="Mudar tema" role="switch" aria-checked="false">
+                <svg class="sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V18.75a.75.75 0 01.75-.75zM5.106 17.834a.75.75 0 001.06 1.06l1.591-1.59a.75.75 0 00-1.06-1.061l-1.591 1.59zM3 12a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5H3.75A.75.75 0 013 12zM6.166 5.106a.75.75 0 00-1.06 1.06l1.59 1.591a.75.75 0 101.061-1.06l-1.59-1.591z" />
+                </svg>
+                <svg class="moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 004.472-.69a.75.75 0 01.819.162l.32.32a.75.75 0 01-.219 1.093A10.43 10.43 0 0118 16.5a10.5 10.5 0 01-10.5-10.5c0-1.25.217-2.447.608-3.565a.75.75 0 011.093-.219l.32.32z" clip-rule="evenodd" />
+                </svg>
+            </button>
         </nav>
     </div>
 </header>
 
-<!--
-  APP ROOT (Raiz da Aplicação)
-  - Esta é a "casca" principal da SPA.
-  - O JavaScript (via script.js) irá injetar os templates
-    (início, projetos, cadastro) dentro desta tag <main>.
--->
-<main id="app-root" class="container">
-    <!-- O conteúdo da página será carregado aqui dinamicamente -->
-    <!-- Por padrão, o script.js deve carregar o template "inicio" -->
+<!-- CONTEÚDO PRINCIPAL (SPA) -->
+<!-- O id "main-content" permite ao "skip-link" funcionar -->
+<main id="main-content">
+    <!-- O CONTEÚDO DAS PÁGINAS SERÁ INJETADO AQUI PELO JAVASCRIPT -->
 </main>
 
-<!--
-  FOOTER (Rodapé)
-  - Também fica fora do <main> pois é persistente.
-  - Usa CSS Grid para o layout responsivo.
--->
-<footer class="site-footer">
-    <div class="container footer-grid">
-        <!-- Coluna 1: Sobre -->
-        <div class="footer-col">
-            <h4 class="footer-title">ONG Raio da Esperança</h4>
-            <p>Transformando vidas e construindo futuros em Curitiba, Paraná. Junte-se a nós e faça parte da mudança.</p>
-            <!-- Imagem (Exemplo de selo) -->
-            <img src="img/selo-transparencia.png" alt="Selo ONG Transparente" class="footer-badge">
+<!-- RODAPÉ -->
+<footer class="footer-container">
+    <div class="container layout-grid">
+        <div class="col-span-12 md-col-span-6">
+            <h3>ONG Raio da Esperança</h3>
+            <p>Rua da Cidadania, 123 - Centro<br>Curitiba - PR, 80010-010</p>
+            <p>&copy; 2024 ONG Raio da Esperança. Todos os direitos reservados.</p>
         </div>
-
-        <!-- Coluna 2: Links Rápidos -->
-        <div class="footer-col">
-            <h4 class="footer-title">Navegação</h4>
-            <ul class="footer-list">
-                <li><a href="#/inicio" class="footer-link">Início</a></li>
-                <li><a href="#/projetos" class="footer-link">Projetos Sociais</a></li>
-                <li><a href="#/cadastro" class="footer-link">Seja Voluntário</a></li>
-                <li><a href="#/sobre/transparencia" class="footer-link">Transparência</a></li>
-                <li><a href="#/doar" class="footer-link">Como Doar</a></li>
-            </ul>
+        <div class="col-span-12 md-col-span-6 footer-social">
+            <h4>Siga-nos</h4>
+            <a href="#" class="social-link" aria-label="Visite nosso Instagram">Instagram</a>
+            <a href="#" class="social-link" aria-label="Visite nosso Facebook">Facebook</a>
+            <a href="#" class="social-link" aria-label="Visite nosso LinkedIn">LinkedIn</a>
         </div>
-
-        <!-- Coluna 3: Contato -->
-        <div class="footer-col">
-            <h4 class="footer-title">Contato</h4>
-            <address class="footer-contact">
-                <p><i class="fas fa-map-marker-alt"></i> Rua da Cidadania, 123 - Centro, Curitiba - PR, 80010-010</p>
-                <p><i class="fas fa-phone"></i> (41) 3321-1234</p>
-                <p><i class="fas fa-envelope"></i> <a href="mailto:contato@raiodaesperanca.org.br" class="footer-link">contato@raiodaesperanca.org.br</a></p>
-            </address>
-        </div>
-
-        <!-- Coluna 4: Redes Sociais -->
-        <div class="footer-col">
-            <h4 class="footer-title">Siga-nos</h4>
-            <div class="social-icons">
-                <a href="#" class="social-link" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                <a href="#" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                <a href="#" class="social-link" aria-label="Youtube"><i class="fab fa-youtube"></i></a>
-            </div>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        <p>&copy; 2024 ONG Raio da Esperança. Todos os direitos reservados. CNPJ: 12.345.678/0001-99</p>
     </div>
 </footer>
 
-<!--
-  MODAL (Componente de Feedback)
-  - Fica escondido por padrão (display: none).
-  - O JavaScript irá torná-lo visível quando necessário.
--->
-<div id="feedback-modal" class="modal-overlay">
-    <div class="modal-content">
-        <button id="modal-close-btn" class="modal-close" aria-label="Fechar modal">&times;</button>
-        <div class="modal-icon">
-            <!-- O ícone será definido via JS (ex: 'fa-check-circle' ou 'fa-times-circle') -->
-            <i id="modal-icon" class="fas"></i>
+<!-- MODAL (Oculto por padrão) -->
+<div class="modal-backdrop" id="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+    <div class="modal">
+        <header class="modal-header">
+            <h2 id="modal-title">Mensagem do Sistema</h2>
+            <button class="modal-close" id="modal-close" aria-label="Fechar modal">&times;</button>
+        </header>
+        <div class="modal-body" id="modal-body">
+            <p>Seu cadastro foi enviado com sucesso!</p>
         </div>
-        <h3 id="modal-title">Título do Modal</h3>
-        <p id="modal-message">Mensagem de feedback para o usuário.</p>
     </div>
 </div>
 
+<!-- O SCRIPT é o mesmo, não precisa mudar o link -->
+<script src="script.js"></script>
 </body>
 </html>

@@ -1,502 +1,673 @@
-/*
- * == SCRIPT PRINCIPAL DA ONG RAIO DA ESPERANÇA (SPA) ==
+/**
+ * Script Principal da SPA (Single Page Application)
  *
- * Este script controla:
- * 1. TEMPLATES: O conteúdo HTML de cada "página".
- * 2. ROTEADOR (Router): A lógica de navegação da SPA.
- * 3. VALIDAÇÃO: A verificação de consistência dos formulários.
- * 4. COMPONENTES: Interatividade do menu, modal, etc.
+ * Funcionalidades:
+ * 1. Roteamento básico de SPA (templates).
+ * 2. Manipulação do DOM para navegação (menu hambúrguer).
+ * 3. Manipulação do DOM para feedback (modal).
+ * 4. Validação de consistência de dados (formulário).
+ * 5. Lógica de Acessibilidade (Modo Escuro) - NOVO
  */
 
-// Espera o DOM estar completamente carregado para executar
+// Espera o DOM estar completamente carregado
 document.addEventListener('DOMContentLoaded', () => {
 
     /*
-     * 1. TEMPLATES JAVASCRIPT
-     * ------------------------
-     * O conteúdo de cada "página" é armazenado aqui como uma string.
-     * Usamos template literals (crases) para permitir HTML multilinha.
-     * NOTA: Atualize os caminhos das imagens (ex: "img/...")
-     */
-    const templates = {
-        inicio: `
-            <div class="section">
-                <div class="grid-container grid-container-2col-fixed">
-                    <div>
-                        <h1 class="section-title" style="text-align: left;">Bem-vindo à Raio da Esperança</h1>
-                        <p>Somos uma organização não-governamental dedicada a transformar vidas na comunidade de Curitiba. Através de projetos de educação, capacitação profissional e assistência social, levamos esperança e novas oportunidades para quem mais precisa.</p>
-                        <p>Nossa missão é construir um futuro mais justo e solidário, um dia de cada vez. Junte-se a nós!</p>
-                        <a href="#/cadastro" class="btn btn-primary">Seja Voluntário</a>
-                        <a href="#/projetos" class="btn btn-outline">Nossos Projetos</a>
-                    </div>
-                    <div>
-                        <!-- Atualize o caminho da imagem -->
-                        <img src="img/equipe-voluntarios.jpg" alt="Equipe de voluntários da ONG" style="border-radius: var(--raio-borda); box-shadow: var(--sombra-card);">
-                    </div>
-                </div>
-            </div>
-            
-            <div class="section" style="background-color: var(--cor-neutra-01); border-radius: var(--raio-borda); padding: var(--esp-4);">
-                 <h2 class="section-title">Nosso Impacto</h2>
-                 <div class="grid-container grid-container-3col">
-                    <div style="text-align: center;">
-                        <h3 class="section-title" style="color: var(--cor-primaria);">+500</h3>
-                        <p>Crianças atendidas em projetos educacionais.</p>
-                    </div>
-                    <div style="text-align: center;">
-                        <h3 class="section-title" style="color: var(--cor-primaria);">+200</h3>
-                        <p>Jovens em oficinas profissionalizantes.</p>
-                    </div>
-                    <div style="text-align: center;">
-                        <h3 class="section-title" style="color: var(--cor-primaria);">+1.000</h3>
-                        <p>Refeições distribuídas mensalmente.</p>
-                    </div>
-                 </div>
-            </div>
-        `,
-        projetos: `
-            <div class="section">
-                <h1 class="section-title">Nossos Projetos</h1>
-                <p style="text-align: center; max-width: 700px; margin: 0 auto var(--esp-4);">Conheça as frentes de atuação que estão mudando a realidade da nossa comunidade. Você pode fazer parte disso através do voluntariado ou de doações.</p>
+    * =========================================
+    * 1. LÓGICA DO MODO ESCURO (NOVO)
+    * =========================================
+    */
 
-                <!-- Grid de Cards de Projetos -->
-                <div class="grid-container grid-container-3col">
-                    
-                    <!-- Card 1: Educação -->
-                    <article class="card">
-                        <!-- Atualize o caminho da imagem -->
-                        <img src="img/projeto-educacao.jpg" alt="Projeto Educação" class="card-image">
-                        <div class="card-content">
-                            <div class="card-tags">
-                                <span class="badge tag-educacao">Educação</span>
-                            </div>
-                            <h3 class="card-title">Educação para o Futuro</h3>
-                            <p>Oferecemos reforço escolar, atividades lúdicas e acesso à tecnologia para crianças de 6 a 12 anos, fomentando a paixão pelo aprendizado.</p>
-                            <div class="card-footer">
-                                <a href="#/doar" class="btn btn-secondary btn-sm">Quero Doar</a>
-                            </div>
-                        </div>
-                    </article>
+    const themeToggleButton = document.getElementById('theme-toggle');
+    const htmlElement = document.documentElement; // Apanha o <html> tag
 
-                    <!-- Card 2: Oficinas -->
-                    <article class="card">
-                        <!-- Atualize o caminho da imagem -->
-                        <img src="img/projeto-oficinas.jpg" alt="Projeto Oficinas" class="card-image">
-                        <div class="card-content">
-                            <div class="card-tags">
-                                <span class="badge tag-oficina">Capacitação</span>
-                            </div>
-                            <h3 class="card-title">Oficinas Profissionalizantes</h3>
-                            <p>Capacitamos jovens e adultos com cursos de informática, corte e costura e panificação, aumentando suas chances no mercado de trabalho.</p>
-                            <div class="card-footer">
-                                <a href="#/doar" class="btn btn-secondary btn-sm">Quero Doar</a>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- Card 3: Sopão Solidário -->
-                    <article class="card">
-                        <!-- Atualize o caminho da imagem -->
-                        <img src="img/sopao-solidario.jpg" alt="Sopão Solidário" class="card-image">
-                        <div class="card-content">
-                            <div class="card-tags">
-                                <span class="badge tag-alimento">Assistência</span>
-                            </div>
-                            <h3 class="card-title">Sopão Solidário</h3>
-                            <p>Todas as quartas-feiras, nossos voluntários preparam e distribuem refeições quentes para pessoas em situação de vulnerabilidade no centro de Curitiba.</p>
-                            <div class="card-footer">
-                                <a href="#/cadastro" class="btn btn-outline btn-sm">Seja Voluntário</a>
-                            </div>
-                        </div>
-                    </article>
-
-                </div>
-            </div>
-        `,
-        cadastro: `
-            <div class="section">
-                <h1 class="section-title">Formulário de Voluntariado</h1>
-                <p style="text-align: center; max-width: 700px; margin: 0 auto var(--esp-4);">Ficamos felizes com seu interesse! Por favor, preencha o formulário abaixo para analisarmos seu perfil e entrarmos em contato.</p>
-                
-                <form id="cadastro-form" class="form-container" novalidate>
-                    <!-- Alerta de Erro Global -->
-                    <div id="form-global-error" class="alert alert-error" style="display: none;">
-                        Por favor, corrija os erros no formulário antes de enviar.
-                    </div>
-                
-                    <fieldset class="form-fieldset">
-                        <legend class="form-legend">Dados Pessoais</legend>
-                        
-                        <!-- Nome Completo -->
-                        <div class="form-group">
-                            <label for="nome" class="form-label">Nome Completo</label>
-                            <input type="text" id="nome" name="nome" class="form-input" required minlength="3">
-                            <div class="form-error-message">O nome é obrigatório (mínimo 3 caracteres).</div>
-                        </div>
-
-                        <!-- Email -->
-                        <div class="form-group">
-                            <label for="email" class="form-label">E-mail</label>
-                            <input type="email" id="email" name="email" class="form-input" required>
-                            <div class="form-error-message">Por favor, insira um e-mail válido.</div>
-                        </div>
-
-                        <!-- CPF -->
-                        <div class="form-group">
-                            <label for="cpf" class="form-label">CPF</label>
-                            <input type="text" id="cpf" name="cpf" class="form-input" required placeholder="000.000.000-00">
-                            <div class="form-error-message">CPF inválido. Use o formato 000.000.000-00.</div>
-                        </div>
-
-                        <!-- Telefone -->
-                        <div class="form-group">
-                            <label for="telefone" class="form-label">Telefone (WhatsApp)</label>
-                            <input type="tel" id="telefone" name="telefone" class="form-input" required placeholder="(00) 90000-0000">
-                            <div class="form-error-message">Telefone inválido. Use o formato (00) 90000-0000.</div>
-                        </div>
-
-                        <!-- Data de Nascimento -->
-                        <div class="form-group">
-                            <label for="dataNascimento" class="form-label">Data de Nascimento</label>
-                            <input type="date" id="dataNascimento" name="dataNascimento" class="form-input" required>
-                            <div class="form-error-message">Data de nascimento é obrigatória.</div>
-                        </div>
-                    </fieldset>
-
-                    <fieldset class="form-fieldset">
-                        <legend class="form-legend">Endereço</legend>
-                        
-                        <!-- CEP -->
-                        <div class="form-group">
-                            <label for="cep" class="form-label">CEP</label>
-                            <input type="text" id="cep" name="cep" class="form-input" required placeholder="00000-000">
-                            <div class="form-error-message">CEP inválido (use 00000-000). Apenas CEPs de Curitiba (iniciados com 8) são aceitos.</div>
-                        </div>
-                        
-                        <!-- Endereço (Rua) -->
-                        <div class="form-group">
-                            <label for="endereco" class="form-label">Endereço (Rua e Nº)</label>
-                            <input type="text" id="endereco" name="endereco" class="form-input" required>
-                            <div class="form-error-message">Endereço é obrigatório.</div>
-                        </div>
-
-                        <!-- Cidade -->
-                        <div class="form-group">
-                            <label for="cidade" class="form-label">Cidade</label>
-                            <input type="text" id="cidade" name="cidade" class="form-input" value="Curitiba" readonly disabled>
-                            <div class="form-error-message"></div>
-                        </div>
-
-                        <!-- Estado -->
-                        <div class="form-group">
-                            <label for="estado" class="form-label">Estado</label>
-                            <input type="text" id="estado" name="estado" class="form-input" value="PR" readonly disabled>
-                            <div class="form-error-message"></div>
-                        </div>
-                    </fieldset>
-
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary btn-full">Enviar Cadastro</button>
-                    </div>
-                </form>
-            </div>
-        `,
-        // Templates de "fallback" para links de exemplo
-        'sobre/quem-somos': `<h1 class="section-title">Quem Somos</h1><p>Página "Quem Somos" em construção.</p>`,
-        'sobre/transparencia': `<h1 class="section-title">Transparência</h1><p>Página "Transparência" em construção.</p>`,
-        doar: `<h1 class="section-title">Doe Agora</h1><p>Página "Como Doar" em construção.</p>`,
+    // Função para aplicar o tema
+    const applyTheme = (theme) => {
+        if (theme === 'dark') {
+            htmlElement.setAttribute('data-theme', 'dark');
+            themeToggleButton.setAttribute('aria-checked', 'true');
+        } else {
+            htmlElement.setAttribute('data-theme', 'light');
+            themeToggleButton.setAttribute('aria-checked', 'false');
+        }
     };
 
+    // Função para alternar o tema
+    const toggleTheme = () => {
+        const currentTheme = htmlElement.getAttribute('data-theme') || 'light';
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+        localStorage.setItem('theme', newTheme); // Salva a escolha do usuário
+        applyTheme(newTheme);
+    };
+
+    // Event Listener para o botão
+    themeToggleButton.addEventListener('click', toggleTheme);
+
+    // Inicialização do Tema:
+    // 1. Verifica se o usuário já escolheu um tema (localStorage)
+    const savedTheme = localStorage.getItem('theme');
+    // 2. Se não, verifica a preferência do sistema (prefers-color-scheme)
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (savedTheme) {
+        applyTheme(savedTheme);
+    } else if (prefersDark) {
+        applyTheme('dark');
+    } else {
+        applyTheme('light');
+    }
+
     /*
-     * 2. ROTEADOR (SPA Router)
-     * ------------------------
-     */
-    const app = {
-        // Elemento principal onde o conteúdo será renderizado
-        root: document.getElementById('app-root'),
-        // Links de navegação (para marcar como "ativo")
-        navLinks: document.querySelectorAll('.nav-link'),
-        // Referência ao modal de feedback
-        modal: {
-            overlay: document.getElementById('feedback-modal'),
-            title: document.getElementById('modal-title'),
-            message: document.getElementById('modal-message'),
-            icon: document.getElementById('modal-icon'),
-            closeBtn: document.getElementById('modal-close-btn'),
-        },
+    * =========================================
+    * 2. SISTEMA DE TEMPLATES (CONTEÚDO DAS PÁGINAS)
+    * =========================================
+    */
 
-        // Função principal de navegação
-        navigate(path) {
-            // Encontra o template correspondente ao 'path'
-            // Se não encontrar, usa o template 'inicio' como padrão
-            const template = templates[path] || templates.inicio;
+    const templates = {
+        /**
+         * Template: Início (Homepage)
+         */
+        inicio: `
+            <section class="page-section hero">
+                <div class="container">
+                    <h2 class="col-span-12">Transformando Vidas em Curitiba</h2>
+                    <p class="col-span-12">
+                        A ONG Raio da Esperança dedica-se a criar oportunidades através da
+                        educação, capacitação profissional e apoio comunitário.
+                    </p>
+                    <a href="#projetos" class="btn btn-secondary">Conheça Nossos Projetos</a>
+                </div>
+            </section>
 
-            // Injeta o HTML do template no elemento <main>
-            this.root.innerHTML = template;
+            <section class="page-section">
+                <div class="container layout-grid">
+                    <div class="col-span-12 md-col-span-6">
+                        <h2>Nossa Missão</h2>
+                        <p>
+                            Ser um farol de esperança na comunidade, oferecendo ferramentas para 
+                            que crianças, jovens e adultos possam construir um futuro mais digno 
+                            e próspero. Acreditamos no poder da solidariedade para mudar realidades.
+                        </p>
+                        <h3>Informações de Contato</h3>
+                        <p>
+                            <strong>Endereço:</strong> Rua da Cidadania, 123 - Centro, Curitiba - PR<br>
+                            <strong>Telefone:</strong> (41) 3333-4444<br>
+                            <strong>Email:</strong> contato@raiodaesperanca.org.br
+                        </p>
+                    </div>
+                    <div class="col-span-12 md-col-span-6">
+                        <img src="https://placehold.co/600x400/005A9C/FFFFFF?text=Nossa+Sede+em+Curitiba" alt="Sede da ONG Raio da Esperança em Curitiba." class="image-responsive">
+                    </div>
+                </div>
+            </section>
+        `,
 
-            // Atualiza o link "ativo" no menu
-            this.updateActiveLink(path);
+        /**
+         * Template: Projetos Sociais
+         */
+        projetos: `
+            <section class="page-section">
+                <div class="container">
+                    <h2 class="text-center">Nossos Projetos</h2>
+                    <p class="text-center" style="max-width: 800px; margin: 0 auto var(--space-lg) auto;">
+                        Conheça as frentes de atuação da Raio da Esperança. Cada projeto é 
+                        uma semente plantada no futuro da nossa comunidade.
+                    </p>
 
-            // Após carregar o template, verifica se é o formulário
-            if (path === 'cadastro') {
-                // Se for o cadastro, inicializa os 'event listeners' desse formulário
-                this.initCadastroForm();
-            }
+                    <!-- Grelha de Cards -->
+                    <div class="card-grid">
+                        
+                        <!-- Card 1: Educação -->
+                        <article class="card">
+                            <img src="https://placehold.co/600x400/FDB813/4A4A4A?text=Projeto+Educação" alt="Crianças em sala de aula." class="card-image">
+                            <div class="card-body">
+                                <span class="badge badge-success">Educação</span>
+                                <h3>Projeto Educação para o Futuro</h3>
+                                <p>Oferecemos reforço escolar e aulas de informática para crianças e adolescentes em situação de vulnerabilidade social.</p>
+                                <div class="card-footer">
+                                    <a href="#cadastro" class="btn btn-primary">Quero ser voluntário</a>
+                                </div>
+                            </div>
+                        </article>
 
-            // Rola a página para o topo
-            window.scrollTo(0, 0);
-        },
+                        <!-- Card 2: Oficinas -->
+                        <article class="card">
+                            <img src="https://placehold.co/600x400/007BFF/FFFFFF?text=Oficinas+Profissionais" alt="Pessoa aprendendo costura." class="card-image">
+                            <div class="card-body">
+                                <span class="badge badge-info">Capacitação</span>
+                                <h3>Oficinas Profissionalizantes</h3>
+                                <p>Cursos de curta duração (padaria, costura, manutenção) para jovens e adultos, visando a geração de renda e autonomia.</p>
+                                <div class="card-footer">
+                                    <a href="#cadastro" class="btn btn-primary">Quero ser voluntário</a>
+                                </div>
+                            </div>
+                        </article>
 
-        // Marca o link de navegação atual como "ativo"
-        updateActiveLink(path) {
-            this.navLinks.forEach(link => {
-                // Compara o hash do link (ex: #/projetos) com o path atual
-                if (link.getAttribute('href') === `#/${path}`) {
+                        <!-- Card 3: Sopão -->
+                        <article class="card">
+                            <img src="https://placehold.co/600x400/6C757D/FFFFFF?text=Sopão+Solidário" alt="Voluntários distribuindo sopa." class="card-image">
+                            <div class="card-body">
+                                <span class="badge badge-warning">Apoio</span>
+                                <h3>Sopão Solidário</h3>
+                                <p>Distribuição semanal de refeições quentes para pessoas em situação de rua no centro de Curitiba, feita inteiramente por voluntários.</p>
+                                <div class="card-footer">
+                                    <a href="#cadastro" class="btn btn-primary">Quero ser voluntário</a>
+                                </div>
+                            </div>
+                        </article>
+
+                    </div>
+                </div>
+            </section>
+            
+            <section class="page-section" style="background-color: var(--color-surface);">
+                <div class="container layout-grid">
+                    <div class="col-span-12 md-col-span-6">
+                        <h2>Como Doar?</h2>
+                        <p>Sua contribuição financeira é vital para mantermos nossos projetos ativos. Qualquer valor faz a diferença.</p>
+                        <p><strong>PIX (CNPJ):</strong> 12.345.678/0001-99</p>
+                        <p><strong>Banco do Brasil</strong><br>
+                           Agência: 0001<br>
+                           Conta Corrente: 98765-4
+                        </p>
+                        <a href="#" class="btn btn-secondary">Doar Agora (Online)</a>
+                    </div>
+                    <div class="col-span-12 md-col-span-6">
+                        <h2>Transparência</h2>
+                        <p>Prestamos contas de cada centavo recebido. Acesse nosso portal da transparência e veja como sua doação está sendo utilizada.</p>
+                        <img src="https://placehold.co/600x300/198754/FFFFFF?text=Portal+da+Transparência" alt="Gráfico ilustrativo de transparência e gestão de fundos.">
+                    </div>
+                </div>
+            </section>
+        `,
+
+        /**
+         * Template: Cadastro (Formulário)
+         */
+        cadastro: `
+            <section class="page-section">
+                <div class="container">
+                    <div class="layout-grid">
+                        <div class="col-span-12 lg-col-span-10 xl-col-span-8" style="margin: 0 auto;">
+                            <h2 class="text-center">Formulário de Voluntariado</h2>
+                            <p class="text-center">
+                                Que bom ter você aqui! Por favor, preencha seus dados e nossa equipe 
+                                entrará em contato o mais breve possível.
+                            </p>
+
+                            <!-- Alerta de Erro (para consistência) -->
+                            <div id="form-error-alert" class="alert alert-danger" hidden>
+                                <strong>Erro de Validação:</strong> <span id="form-error-message"></span>
+                            </div>
+
+                            <form id="cadastro-form" class="layout-grid" novalidate>
+
+                                <!-- Bloco 1: Dados Pessoais -->
+                                <fieldset class="form-fieldset col-span-12">
+                                    <legend>1. Dados Pessoais</legend>
+                                    
+                                    <div class="form-group col-span-12">
+                                        <label for="nome" class="form-label">Nome Completo</label>
+                                        <input type="text" id="nome" name="nome" class="form-control" required minlength="3">
+                                        <small class="error-message" id="error-nome"></small>
+                                    </div>
+                                    
+                                    <div class="form-group col-span-12 md-col-span-6">
+                                        <label for="nascimento" class="form-label">Data de Nascimento</label>
+                                        <input type="date" id="nascimento" name="nascimento" class="form-control" required>
+                                        <small class="error-message" id="error-nascimento"></small>
+                                    </div>
+
+                                    <div class="form-group col-span-12 md-col-span-6">
+                                        <label for="cpf" class="form-label">CPF</label>
+                                        <input type="text" id="cpf" name="cpf" class="form-control" placeholder="000.000.000-00" required>
+                                        <small class="error-message" id="error-cpf"></small>
+                                    </div>
+                                </fieldset>
+
+                                <!-- Bloco 2: Contato -->
+                                <fieldset class="form-fieldset col-span-12">
+                                    <legend>2. Contato</legend>
+
+                                    <div class="form-group col-span-12 md-col-span-7">
+                                        <label for="email" class="form-label">E-mail</label>
+                                        <input type="email" id="email" name="email" class="form-control" placeholder="seu.email@exemplo.com" required>
+                                        <small class="error-message" id="error-email"></small>
+                                    </div>
+
+                                    <div class="form-group col-span-12 md-col-span-5">
+                                        <label for="telefone" class="form-label">Telefone (Celular)</label>
+                                        <input type="tel" id="telefone" name="telefone" class="form-control" placeholder="(00) 90000-0000" required>
+                                        <small class="error-message" id="error-telefone"></small>
+                                    </div>
+                                </fieldset>
+
+                                <!-- Bloco 3: Endereço (Validação de Consistência) -->
+                                <fieldset class="form-fieldset col-span-12">
+                                    <legend>3. Endereço</legend>
+
+                                    <div class="form-group col-span-12 md-col-span-4">
+                                        <label for="cep" class="form-label">CEP</label>
+                                        <input type="text" id="cep" name="cep" class="form-control" placeholder="00000-000" required>
+                                        <small class="error-message" id="error-cep"></small>
+                                    </div>
+
+                                    <div class="form-group col-span-12 md-col-span-8">
+                                        <label for="endereco" class="form-label">Endereço (Rua e Número)</label>
+                                        <input type="text" id="endereco" name="endereco" class="form-control" required>
+                                        <small class="error-message" id="error-endereco"></small>
+                                    </div>
+
+                                    <div class="form-group col-span-12 md-col-span-6">
+                                        <label for="cidade" class="form-label">Cidade</label>
+                                        <input type="text" id="cidade" name="cidade" class="form-control" value="Curitiba" required>
+                                        <small class="error-message" id="error-cidade"></small>
+                                    </div>
+
+                                    <div class="form-group col-span-12 md-col-span-6">
+                                        <label for="estado" class="form-label">Estado</label>
+                                        <input type="text" id="estado" name="estado" class="form-control" value="PR" required>
+                                        <small class="error-message" id="error-estado"></small>
+                                    </div>
+                                </fieldset>
+
+                                <div class="col-span-12 text-center">
+                                    <button type="submit" class="btn btn-primary" id="submit-button">Quero ser voluntário!</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        `
+    };
+
+
+    /*
+    * =========================================
+    * 3. ROTEADOR SPA BÁSICO
+    * =========================================
+    */
+
+    const mainContent = document.getElementById('main-content');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    // Função para carregar o conteúdo da página
+    const loadContent = (hash) => {
+        // Limpa o hash (ex: #/cadastro -> cadastro)
+        const page = hash.replace('#', '') || 'inicio';
+
+        // Injeta o template no <main>
+        if (templates[page]) {
+            mainContent.innerHTML = templates[page];
+
+            // Atualiza o estado 'active' nos links de navegação
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === `#${page}`) {
                     link.classList.add('active');
                 } else {
                     link.classList.remove('active');
                 }
             });
-        },
 
-        // Inicializa o formulário de cadastro (adiciona máscaras e validação)
-        initCadastroForm() {
-            const form = document.getElementById('cadastro-form');
-            if (!form) return; // Segurança: sai se o formulário não existir
-
-            const inputs = {
-                cpf: form.querySelector('#cpf'),
-                telefone: form.querySelector('#telefone'),
-                cep: form.querySelector('#cep'),
-            };
-
-            // Aplica máscaras aos inputs
-            this.applyInputMasks(inputs);
-
-            // Adiciona o listener para o evento "submit" do formulário
-            form.addEventListener('submit', (e) => {
-                e.preventDefault(); // Impede o recarregamento da página
-
-                // Roda a função de validação
-                const isValid = this.validateForm(form);
-
-                const globalError = document.getElementById('form-global-error');
-
-                if (isValid) {
-                    // SUCESSO: Formulário é válido
-                    console.log("Formulário válido. Enviando dados...");
-                    globalError.style.display = 'none';
-                    // Simula o envio e mostra modal de sucesso
-                    this.showModal(
-                        'Sucesso!',
-                        'Seu cadastro foi enviado. Entraremos em contato em breve.',
-                        'success'
-                    );
-                    form.reset(); // Limpa o formulário
-                } else {
-                    // ERRO: Formulário inválido
-                    console.error("Formulário inválido.");
-                    globalError.style.display = 'block'; // Mostra o alerta global
-                    // Foca no primeiro campo inválido
-                    form.querySelector('.invalid .form-input').focus();
-                }
-            });
-        },
-
-        /*
-         * 3. VALIDAÇÃO DE CONSISTÊNCIA
-         * ---------------------------
-         * Sistema de verificação de dados do formulário.
-         */
-        validateForm(form) {
-            let isFormValid = true; // Flag: se torna 'false' se UM campo falhar
-
-            // Pega todos os campos que precisam de validação
-            const fieldsToValidate = form.querySelectorAll('[required]');
-
-            // Loop por cada campo
-            fieldsToValidate.forEach(field => {
-                // 'this.validateField' retorna 'true' (válido) ou 'false' (inválido)
-                const isFieldValid = this.validateField(field);
-
-                // Se UM campo for inválido, o formulário inteiro é inválido
-                if (!isFieldValid) {
-                    isFormValid = false;
-                }
-            });
-
-            return isFormValid;
-        },
-
-        // Validação individual de cada campo
-        validateField(field) {
-            const value = field.value.trim();
-            const type = field.type;
-            const id = field.id;
-            const parentGroup = field.closest('.form-group');
-            let isValid = true;
-
-            // 1. Validação básica (natura do HTML5)
-            if (!field.checkValidity()) {
-                isValid = false;
+            // Se a página for 'cadastro', inicializa os listeners do formulário
+            if (page === 'cadastro') {
+                initCadastroForm();
             }
-
-            // 2. Validação de Consistência (Regras de Negócio)
-            // Aqui entram as verificações mais complexas (Regex, etc.)
-
-            // Validação de CPF (formato)
-            if (id === 'cpf') {
-                const cpfRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
-                if (!cpfRegex.test(value)) isValid = false;
-            }
-
-            // Validação de Telefone (formato)
-            if (id === 'telefone') {
-                const telRegex = /^\(\d{2}\) 9\d{4}-\d{4}$/;
-                if (!telRegex.test(value)) isValid = false;
-            }
-
-            // Validação de CEP (formato E regra de negócio: ser de Curitiba)
-            if (id === 'cep') {
-                const cepRegex = /^\d{5}-\d{3}$/;
-                if (!cepRegex.test(value)) {
-                    // Formato errado
-                    isValid = false;
-                } else if (!value.startsWith('8')) {
-                    // Regra de Negócio: Não é de Curitiba (CEP de Curitiba começa com 8)
-                    isValid = false;
-                }
-            }
-
-            // 3. Manipulação do DOM (Mostrar/Esconder Erros)
-            if (isValid) {
-                // Campo VÁLIDO
-                parentGroup.classList.remove('invalid');
-            } else {
-                // Campo INVÁLIDO
-                parentGroup.classList.add('invalid');
-            }
-
-            return isValid;
-        },
-
-        // Função para aplicar máscaras (CPF, Tel, CEP)
-        applyInputMasks(inputs) {
-            // Máscara de CPF: 000.000.000-00
-            inputs.cpf?.addEventListener('input', (e) => {
-                let v = e.target.value.replace(/\D/g, ''); // Remove não-números
-                v = v.slice(0, 11); // Limita a 11 dígitos
-                if (v.length > 9) {
-                    v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-                } else if (v.length > 6) {
-                    v = v.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
-                } else if (v.length > 3) {
-                    v = v.replace(/(\d{3})(\d{1,3})/, '$1.$2');
-                }
-                e.target.value = v;
-            });
-
-            // Máscara de Telefone: (00) 90000-0000
-            inputs.telefone?.addEventListener('input', (e) => {
-                let v = e.target.value.replace(/\D/g, '');
-                v = v.slice(0, 11);
-                if (v.length > 10) {
-                    v = v.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-                } else if (v.length > 6) {
-                    v = v.replace(/(\d{2})(\d{4})(\d{1,4})/, '($1) $2-$3');
-                } else if (v.length > 2) {
-                    v = v.replace(/(\d{2})(\d{1,4})/, '($1) $2');
-                } else if (v.length > 0) {
-                    v = v.replace(/(\d{1,2})/, '($1');
-                }
-                e.target.value = v;
-            });
-
-            // Máscara de CEP: 00000-000
-            inputs.cep?.addEventListener('input', (e) => {
-                let v = e.target.value.replace(/\D/g, '');
-                v = v.slice(0, 8);
-                if (v.length > 5) {
-                    v = v.replace(/(\d{5})(\d{1,3})/, '$1-$2');
-                }
-                e.target.value = v;
-            });
-        },
-
-        /*
-         * 4. COMPONENTES (Modal, Menu)
-         * ---------------------------
-         */
-
-        // Função para exibir o modal de feedback
-        showModal(title, message, type = 'success') {
-            this.modal.title.textContent = title;
-            this.modal.message.textContent = message;
-
-            // Define o ícone (sucesso ou erro)
-            this.modal.icon.className = 'fas'; // Limpa classes antigas
-            if (type === 'success') {
-                this.modal.icon.classList.add('fa-check-circle');
-            } else {
-                this.modal.icon.classList.add('fa-times-circle');
-            }
-
-            this.modal.overlay.classList.add('visible');
-        },
-
-        // Inicializa os listeners do Modal
-        initModal() {
-            this.modal.closeBtn.addEventListener('click', () => {
-                this.modal.overlay.classList.remove('visible');
-            });
-            this.modal.overlay.addEventListener('click', (e) => {
-                // Fecha se clicar fora do 'modal-content'
-                if (e.target === this.modal.overlay) {
-                    this.modal.overlay.classList.remove('visible');
-                }
-            });
-        },
-
-        // Inicializa o Menu Hambúrguer (Mobile)
-        initMenuMobile() {
-            const navToggle = document.querySelector('.nav-toggle');
-            const mainNav = document.querySelector('.main-nav');
-            const dropdownLinks = document.querySelectorAll('.has-dropdown > .nav-link');
-
-            navToggle.addEventListener('click', () => {
-                mainNav.classList.toggle('is-open');
-            });
-
-            // Lógica para dropdown no mobile (requer clique)
-            dropdownLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    // Só ativa no modo mobile (quando o nav-toggle está visível)
-                    if (window.getComputedStyle(navToggle).display !== 'none') {
-                        e.preventDefault(); // Impede a navegação do link pai
-                        link.parentElement.classList.toggle('is-open');
-                    }
-                });
-            });
-        },
-
-        // Função principal de inicialização do Roteador
-        initRouter() {
-            // Ouve mudanças na hash (ex: #/inicio -> #/projetos)
-            window.addEventListener('hashchange', () => {
-                const path = window.location.hash.slice(2) || 'inicio';
-                this.navigate(path);
-            });
-
-            // Carrega a página inicial ou a página da hash atual
-            const initialPath = window.location.hash.slice(2) || 'inicio';
-            this.navigate(initialPath);
+        } else {
+            // Página não encontrada (simples)
+            mainContent.innerHTML = `
+                <section class="page-section text-center">
+                    <div class="container">
+                        <h2>Erro 404</h2>
+                        <p>Desculpe, a página que você procura não foi encontrada.</p>
+                        <a href="#inicio" class="btn btn-primary">Voltar ao Início</a>
+                    </div>
+                </section>
+            `;
         }
     };
 
-    // --- INICIALIZAÇÃO DA APLICAÇÃO ---
-    app.initRouter();    // Inicia o roteador
-    app.initModal();     // Inicia os listeners do modal
-    app.initMenuMobile(); // Inicia os listeners do menu mobile
+    // Event Listener para mudanças no Hash (navegação)
+    window.addEventListener('hashchange', () => {
+        loadContent(window.location.hash);
+        window.scrollTo(0, 0); // Rola para o topo ao mudar de página
+    });
+
+    // Carrega o conteúdo inicial (ao abrir o site)
+    loadContent(window.location.hash);
+
+
+    /*
+    * =========================================
+    * 4. NAVEGAÇÃO MOBILE (Hambúrguer)
+    * =========================================
+    */
+
+    const navToggle = document.querySelector('.nav-toggle');
+    const navMenu = document.querySelector('.nav-menu');
+
+    navToggle.addEventListener('click', () => {
+        const isExpanded = navToggle.getAttribute('aria-expanded') === 'true';
+        navToggle.setAttribute('aria-expanded', !isExpanded);
+        navMenu.classList.toggle('is-active');
+    });
+
+    // Fecha o menu ao clicar num link (comportamento de SPA)
+    navMenu.addEventListener('click', (e) => {
+        if (e.target.classList.contains('nav-link')) {
+            navToggle.setAttribute('aria-expanded', 'false');
+            navMenu.classList.remove('is-active');
+        }
+    });
+
+
+    /*
+    * =========================================
+    * 5. FEEDBACK (MODAL)
+    * =========================================
+    */
+
+    const modalBackdrop = document.getElementById('modal-backdrop');
+    const modalBody = document.getElementById('modal-body');
+    const modalCloseButton = document.getElementById('modal-close');
+
+    // Função para mostrar o modal
+    const showModal = (title, message) => {
+        document.getElementById('modal-title').textContent = title;
+        modalBody.innerHTML = message;
+        modalBackdrop.hidden = false;
+        modalBackdrop.classList.add('is-visible');
+        modalCloseButton.focus(); // Foco no botão de fechar (Acessibilidade)
+    };
+
+    // Função para fechar o modal
+    const closeModal = () => {
+        modalBackdrop.hidden = true;
+        modalBackdrop.classList.remove('is-visible');
+    };
+
+    // Event Listeners para fechar o modal
+    modalCloseButton.addEventListener('click', closeModal);
+    modalBackdrop.addEventListener('click', (e) => {
+        // Fecha apenas se clicar no backdrop, não no modal em si
+        if (e.target === modalBackdrop) {
+            closeModal();
+        }
+    });
+    // Fecha com a tecla ESC (Acessibilidade)
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modalBackdrop.hidden) {
+            closeModal();
+        }
+    });
+
+
+    /*
+    * =========================================
+    * 6. VALIDAÇÃO DE FORMULÁRIO (Cadastro)
+    * =========================================
+    */
+
+    // Esta função é chamada sempre que o template 'cadastro' é carregado
+    const initCadastroForm = () => {
+        const form = document.getElementById('cadastro-form');
+        const formErrorAlert = document.getElementById('form-error-alert');
+        const formErrorMessage = document.getElementById('form-error-message');
+        const submitButton = document.getElementById('submit-button');
+
+        // Campos do formulário
+        const inputs = {
+            nome: document.getElementById('nome'),
+            nascimento: document.getElementById('nascimento'),
+            cpf: document.getElementById('cpf'),
+            email: document.getElementById('email'),
+            telefone: document.getElementById('telefone'),
+            cep: document.getElementById('cep'),
+            endereco: document.getElementById('endereco'),
+            cidade: document.getElementById('cidade'),
+            estado: document.getElementById('estado'),
+        };
+
+        // Regras de Validação (mensagens de erro)
+        const validationRules = {
+            nome: {
+                required: "O Nome Completo é obrigatório.",
+                minLength: "O Nome deve ter pelo menos 3 caracteres."
+            },
+            nascimento: {
+                required: "A Data de Nascimento é obrigatória.",
+                underAge: "Você deve ser maior de 18 anos para ser voluntário."
+            },
+            cpf: {
+                required: "O CPF é obrigatório.",
+                pattern: "O CPF deve estar no formato 000.000.000-00."
+            },
+            email: {
+                required: "O E-mail é obrigatório.",
+                pattern: "Por favor, insira um e-mail válido."
+            },
+            telefone: {
+                required: "O Telefone é obrigatório.",
+                pattern: "O Telefone deve estar no formato (00) 90000-0000."
+            },
+            cep: {
+                required: "O CEP é obrigatório.",
+                pattern: "O CEP deve estar no formato 00000-000."
+            },
+            endereco: {
+                required: "O Endereço é obrigatório."
+            },
+            cidade: {
+                required: "A Cidade é obrigatória."
+            },
+            estado: {
+                required: "O Estado é obrigatório."
+            }
+        };
+
+        // Função para aplicar Máscaras de Input
+        const applyMasks = () => {
+            maskInput(inputs.cpf, '000.000.000-00');
+            maskInput(inputs.telefone, '(00) 00000-0000');
+            maskInput(inputs.cep, '00000-000');
+        };
+
+        // Função genérica de máscara
+        const maskInput = (input, mask) => {
+            input.addEventListener('input', (e) => {
+                const value = e.target.value.replace(/\D/g, ''); // Remove tudo exceto dígitos
+                let maskedValue = '';
+                let k = 0;
+                for (let i = 0; i < mask.length; i++) {
+                    if (mask[i] === '0') {
+                        if (k < value.length) {
+                            maskedValue += value[k];
+                            k++;
+                        } else {
+                            break;
+                        }
+                    } else {
+                        if (k < value.length || value.length === k && mask[i+1] === '0') {
+                            maskedValue += mask[i];
+                        }
+                    }
+                }
+                e.target.value = maskedValue;
+            });
+        };
+
+        // Função para mostrar erro individual
+        const showError = (inputId, message) => {
+            const input = inputs[inputId];
+            const errorField = document.getElementById(`error-${inputId}`);
+            if (input && errorField) {
+                input.classList.add('is-invalid');
+                input.classList.remove('is-valid');
+                errorField.textContent = message;
+                input.setAttribute('aria-invalid', 'true');
+                input.setAttribute('aria-describedby', `error-${inputId}`);
+            }
+        };
+
+        // Função para limpar erro individual
+        const clearError = (inputId) => {
+            const input = inputs[inputId];
+            const errorField = document.getElementById(`error-${inputId}`);
+            if (input && errorField) {
+                input.classList.remove('is-invalid');
+                errorField.textContent = '';
+                input.removeAttribute('aria-invalid');
+                input.removeAttribute('aria-describedby');
+            }
+        };
+
+        // Função para mostrar alerta global do formulário
+        const showFormAlert = (message) => {
+            formErrorMessage.textContent = message;
+            formErrorAlert.hidden = false;
+        };
+
+        // Função para limpar alerta global
+        const clearFormAlert = () => {
+            formErrorMessage.textContent = '';
+            formErrorAlert.hidden = true;
+        };
+
+
+        // Função Principal de Validação (Chamada no Submit)
+        const validateForm = () => {
+            let isValid = true;
+            clearFormAlert();
+
+            // 1. Validação de Campos Individuais
+            for (const inputId in inputs) {
+                const input = inputs[inputId];
+                const rules = validationRules[inputId];
+                clearError(inputId);
+
+                // Regra: Obrigatório (required)
+                if (input.required && input.value.trim() === '') {
+                    isValid = false;
+                    showError(inputId, rules.required);
+                    continue; // Pula para o próximo input
+                }
+
+                // Regra: Tamanho Mínimo (minLength)
+                if (rules.minLength && input.value.length < rules.minLength) {
+                    isValid = false;
+                    showError(inputId, rules.minLength);
+                    continue;
+                }
+
+                // Regra: Padrão (pattern)
+                if (rules.pattern) {
+                    let regex;
+                    if (inputId === 'cpf') regex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+                    if (inputId === 'email') regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (inputId === 'telefone') regex = /^\(\d{2}\) \d{5}-\d{4}$/;
+                    if (inputId === 'cep') regex = /^\d{5}-\d{3}$/;
+
+                    if (regex && !regex.test(input.value)) {
+                        isValid = false;
+                        showError(inputId, rules.pattern);
+                        continue;
+                    }
+                }
+
+                // Regra: Idade (Data de Nascimento)
+                if (inputId === 'nascimento' && input.value) {
+                    const birthDate = new Date(input.value);
+                    const today = new Date();
+                    let age = today.getFullYear() - birthDate.getFullYear();
+                    const monthDiff = today.getMonth() - birthDate.getMonth();
+                    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                        age--;
+                    }
+                    if (age < 18) {
+                        isValid = false;
+                        showError(inputId, rules.underAge);
+                        continue;
+                    }
+                }
+
+                // Se passou por todas as regras, marca como válido
+                if(input.required) {
+                    input.classList.add('is-valid');
+                }
+            }
+
+            // 2. Validação de CONSISTÊNCIA de Dados
+            // (Verifica se o CEP é de Curitiba/PR, já que os campos estão travados)
+            const cep = inputs.cep.value;
+            const cidade = inputs.cidade.value;
+            const estado = inputs.estado.value;
+
+            // CEPs de Curitiba começam com 80, 81 ou 82
+            if (cep && !/^(80|81|82)\d{3}-\d{3}$/.test(cep)) {
+                if (cidade === 'Curitiba' && estado === 'PR') {
+                    isValid = false;
+                    showError('cep', 'Este CEP não parece ser de Curitiba. Por favor, verifique.');
+                    // Mostra o alerta global
+                    showFormAlert('O CEP informado não é compatível com a cidade de Curitiba (PR).');
+                }
+            }
+
+            return isValid;
+        };
+
+
+        // Event Listener do SUBMIT
+        form.addEventListener('submit', (e) => {
+            e.preventDefault(); // Impede o envio tradicional
+
+            if (validateForm()) {
+                // SUCESSO!
+                submitButton.disabled = true;
+                submitButton.textContent = 'Enviando...';
+
+                // Simula um envio (2 segundos)
+                setTimeout(() => {
+                    // Limpa o formulário
+                    form.reset();
+                    // Limpa todos os indicadores de validação
+                    for (const inputId in inputs) {
+                        clearError(inputId);
+                        inputs[inputId].classList.remove('is-valid');
+                    }
+                    // Mostra o Modal de Sucesso
+                    showModal(
+                        'Cadastro Recebido!',
+                        `<p>Obrigado, <strong>${inputs.nome.value}</strong>!</p>
+                         <p>Recebemos seus dados e nossa equipe de voluntariado entrará em 
+                         contato pelo telefone ${inputs.telefone.value} ou e-mail ${inputs.email.value} 
+                         em até 5 dias úteis.</p>`
+                    );
+                    // Reativa o botão
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Quero ser voluntário!';
+
+                }, 2000);
+
+            } else {
+                // FALHA na validação
+                // Se o alerta global não foi preenchido pela consistência, preenche agora.
+                if (formErrorAlert.hidden) {
+                    showFormAlert('Existem erros no seu formulário. Por favor, corrija os campos marcados em vermelho.');
+                }
+            }
+        });
+
+        // Validação "ao vivo" (ao sair do campo)
+        for (const inputId in inputs) {
+            inputs[inputId].addEventListener('blur', () => {
+                validateForm(); // Re-valida o formulário todo ao sair de um campo
+            });
+        }
+
+        // Aplica as máscaras
+        applyMasks();
+    };
 
 });
-
